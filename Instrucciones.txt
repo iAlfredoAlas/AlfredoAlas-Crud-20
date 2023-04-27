@@ -15,7 +15,7 @@ Esto es importante para poder correr nuestra api más adelante!!
     USE `ExerciseCrud20%`;
 
     CREATE TABLE IF NOT EXISTS `Student` (
-    `IdEstudent` INT PRIMARY KEY AUTO_INCREMENT,
+    `idStudent` INT PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(255),
     `lastName` VARCHAR(255),
     `email` VARCHAR(255),
@@ -36,7 +36,7 @@ Esto es importante para poder correr nuestra api más adelante!!
     Password: "" //password por defecto, quedara vacio
     database: "exercisecrud20%" //ese nombre es el de la base de datos que creamos a la que pertenece la tabla "student", ustedes la pueden cambiar
 
-7- Como punto inicial para la creación de la api vamos a definir el "endpoint" o Uri a la que accederemos para obtener todos los elementos de nuestra tabla "Usuarios"
+7- Como punto inicial para la creación de la api vamos a definir el "endpoint" o Uri a la que accederemos para obtener todos los elementos de nuestra tabla "student"
     esto conlleva un "endpoint" de tipo GET, que su unica función es obtener la información
 
 8- Una vez creado nuestro endpoint de tipo GET, podemos correr nuestra api para verificar su correcto funcionamiento con la siguiente linea 
@@ -46,15 +46,14 @@ Esto es importante para poder correr nuestra api más adelante!!
     main es el nombre de nuestro archivo .py, en mi caso es main.py 
     en tu caso puede ser Ejercicio.py, por lo tanto quedaria => "uvicorn Ejercicio:app --reload"
 
-9- Si no tenemos ningun error de sintaxis podemos acceder correctamente a la siguiente URL http://127.0.0.1:8000/usuarios en nuestro navegador o tambien http://localhost:8000/usuarios
-    (Aclarar que entramos a la URI /usuarios ya que es el endpoint que he dejado en el archivo main.py, tu puedes llamarlo de otra forma si así lo deseas)
+9- Si no tenemos ningun error de sintaxis podemos acceder correctamente a la siguiente URL http://127.0.0.1:8000/student en nuestro navegador o tambien http://localhost:8000/student
+    (Aclarar que entramos a la URI /student ya que es el endpoint que he dejado en el archivo main.py, tu puedes llamarlo de otra forma si así lo deseas)
     En este caso al acceder solo se nos muestra "[]" ya que no tenemos data en la base de datos, aquí una query para llenar la base de datos y probar nuevamente el GET
 
-    INSERT INTO Usuarios (Nombre, Apellido, Correo, FechaCreacion, Telefono) VALUES
-    ('Juan', 'Pérez', 'juan.perez@example.com', '2022-01-01', '555-1234'),
-    ('María', 'González', 'maria.gonzalez@example.com', '2022-01-02', '555-5678'),
-    ('Pedro', 'Ramírez', 'pedro.ramirez@example.com', '2022-01-03', '555-9012'),
-    ('Ana', 'Sánchez', 'ana.sanchez@example.com', '2022-01-04', '555-3456'),
-    ('Luis', 'Hernández', 'luis.hernandez@example.com', '2022-01-05', '555-7890');
+    INSERT INTO student (name, lastName, email, dateCreation, phone, status) VALUES
+    ('Alfredo', 'Alas', 'alfredo.alas@example.com', '2022-01-01', '555-1234', true),
+    ('Oscar', 'Minero', 'oscar.minero@example.com', '2022-01-02', '555-5678', true),
+    ('Alexis', 'Martinez', 'alexis.martinez@example.com', '2022-01-03', '555-9012', false),
+    ('Guillermo', 'Minero', 'guillero.minero@example.com', '2022-01-04', '555-3456', false);
 
-10- Para continuar ahora haremos un GET por id de usuario, crearemos un nuevo endpoint el cual recibira unicamente un int
+10- Para continuar ahora haremos un GET por id de student, crearemos un nuevo endpoint el cual recibira unicamente un int

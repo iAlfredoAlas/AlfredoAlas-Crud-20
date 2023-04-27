@@ -22,3 +22,79 @@ mySqlConex = mysql.connector.connect(
   password="",
   database="exercisecrud20%"
 )
+
+#Esta es una instancia de FastAPI, la cual levanta la api en local 
+app = FastAPI()
+
+#Recomiendo siempre dejar un endpoint para la ruta "/" dado que será el primer endpoind en visualizar
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
+#Endpoint GET todos los usuarios (PUNTO 7)
+@app.get("/student")
+def get_Student():
+
+#Crear un cursor para ejecutar consultas SQL
+    cursor = mySqlConex.cursor()
+
+    #Ejecutar una consulta SQL para seleccionar todos los usuarios
+    query = "SELECT * FROM student"
+    cursor.execute(query)
+
+    #Obtener los resultados de la consulta
+    resultados = cursor.fetchall()
+
+    #Cerrar el cursor y la conexión a la base de datos
+    cursor.close()
+
+ #Convertir los objetos datetime.date en cadenas de texto, esto se hace ya que en caso de
+    #no hacer esta conversión obtendremos una excepción del siguiente tipo
+    #TypeError: Object of type date is not JSON serializable
+    student = [
+        {
+            "idStudent": student[0],
+            "name": student[1],
+            "lastName": student[2],
+            "email": student[3],
+            "dateCreation": str(student[4]),
+            "phone": student[5],
+            "status": student[6]
+        }
+        for student in resultados
+    ]
+
+    #Devolver los usuarios como una respuesta JSON
+    return JSONResponse(content=student)
+
+#Endpoint GET un usuario por id (PUNTO 10)
+@app.get("/student/{idStudent}")
+def get_StudentById(idStudent: int):
+
+    #Crear un cursor para ejecutar consultas SQL
+    cursor = mySqlConex.cursor()
+
+    #Ejecutar una consulta SQL para seleccionar el usuario con el id especificado
+    query = "SELECT * FROM student WHERE idStudent = %s"
+    cursor.execute(query, (idStudent,))
+
+    #Obtener el resultado de la consulta
+    resultado = cursor.fetchone()
+
+    #Cerrar el cursor y la conexión a la base de datos
+    cursor.close()
+    if resultado is None:
+        #Si no se encontró ningún estudiante con el id especificado, devolver un error 404
+        return JSONResponse(status_code=404, content={"mensaje": "Estudiante no encontrado"})
+    else:
+        #Si se encontró el usuario, devolver la información como una respuesta JSON
+        student = {
+            "idStudent": resultado[0],
+            "name": resultado[1],
+            "lastName": resultado[2],
+            "email": resultado[3],
+            "dateCreation": str(resultado[4]),
+            "phone": resultado[5],
+            "status": resultado[6]
+        }
+        return JSONResponse(content = student)
