@@ -3,7 +3,8 @@ import mysql.connector
 from pydantic import BaseModel
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-import json
+from fastapi.openapi.utils import get_openapi
+from fastapi.openapi.docs import get_swagger_ui_html
 
 #Modelo de tabla Student
 class Student(BaseModel):
@@ -27,9 +28,19 @@ mySqlConex = mysql.connector.connect(
 app = FastAPI()
 
 #Recomiendo siempre dejar un endpoint para la ruta "/" dado que será el primer endpoind en visualizar
-@app.get("/")
+@app.get("/", include_in_schema=False)
 async def root():
     return {"message": "Hello World"}
+
+#Recolecta la información de los endpoint
+@app.get("/openapi.json", include_in_schema=False)
+async def get_open_api_endpoint():
+    return JSONResponse(get_openapi(title="Alfredo Alas Parcial 3 20%", version="0.0.1", routes=app.routes))
+
+#Muestra la documetación de los endpoint
+@app.get("/docs", include_in_schema=False)
+async def get_documentation():
+    return get_swagger_ui_html(openapi_url="/openapi.json", title="documentación")
 
 #Endpoint GET todos los usuarios (PUNTO 7)
 @app.get("/student")
