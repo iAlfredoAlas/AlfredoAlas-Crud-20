@@ -169,13 +169,10 @@ def deleteStudent(idStudent: int):
    try:
       # Crear un cursor para ejecutar consultas SQL
       cursor = mySqlConex.cursor()
-
-      #Extraer los datos del objeto Estudiante
-      status = idStudent.status
-
+      status = False
       # Ejecutar una consulta SQL para eliminar el usuario con el id especificado
       query = "UPDATE Student SET status = %s WHERE idStudent=%s"
-      values = (status)
+      values = (status, idStudent)
       cursor.execute(query, values)
 
       # Guardar los cambios en la base de datos
