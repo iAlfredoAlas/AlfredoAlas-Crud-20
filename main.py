@@ -163,5 +163,28 @@ def addStudent(student: Student):
     except:
       return JSONResponse(status_code=404, content={"error": f"El estudiante no pudo ser actualizado"})
     
-#Endpoint para eliminar estudiante
-#@app.delete("/student/{idStudent}")
+#Endpoint para eliminar estudiante de forma lógica
+@app.delete("/student/{idStudent}")
+def deleteStudent(idStudent: int):
+   try:
+      # Crear un cursor para ejecutar consultas SQL
+      cursor = mySqlConex.cursor()
+
+      #Extraer los datos del objeto Estudiante
+      status = idStudent.status
+
+      # Ejecutar una consulta SQL para eliminar el usuario con el id especificado
+      query = "UPDATE Student SET status = %s WHERE idStudent=%s"
+      values = (status)
+      cursor.execute(query, values)
+
+      # Guardar los cambios en la base de datos
+      mySqlConex.commit()
+
+      # Cerrar el cursor y la conexión a la base de datos
+      cursor.close()
+
+      # Devolver una respuesta JSON indicando que el usuario ha sido eliminado
+      return JSONResponse(content={"mensaje": f"El Estudiante con id {idStudent} ha sido eliminado"})
+   except:
+      return JSONResponse(status_code=400, content={"Error": f"El estudiante con el id {idStudent} no pudo ser eliminado"})
