@@ -33,7 +33,7 @@ async def root():
 
 #Endpoint GET todos los usuarios (PUNTO 7)
 @app.get("/student")
-def get_Student():
+def getStudent():
 
 #Crear un cursor para ejecutar consultas SQL
     cursor = mySqlConex.cursor()
@@ -69,7 +69,7 @@ def get_Student():
 
 #Endpoint GET un usuario por id (PUNTO 10)
 @app.get("/student/{idStudent}")
-def get_StudentById(idStudent: int):
+def getStudentById(idStudent: int):
 
     #Crear un cursor para ejecutar consultas SQL
     cursor = mySqlConex.cursor()
@@ -98,3 +98,69 @@ def get_StudentById(idStudent: int):
             "status": resultado[6]
         }
         return JSONResponse(content = student)
+    
+#Endpoint para editar Estudiantes
+@app.put("/student")
+def updateStudent(student: Student):
+    
+    try:
+      #Crear un cursor para ejecutar consultas SQL
+      cursor = mySqlConex.cursor()
+
+      #Extraer los datos del objeto Estudiante
+      idStudent = student.idStudent
+      nameStudent = student.name
+      lastNameStudent = student.lastName
+      email = student.email
+      dateCreation = student.dateCreation
+      phone = student.phone
+      status = student.status
+
+      # Ejecutar una consulta SQL para actualizar la información del usuario
+      query = "UPDATE Student SET name=%s, lastName=%s, email=%s, dateCreation=%s, phone=%s, status=%s WHERE idStudent=%s"
+      values = (nameStudent, lastNameStudent, email, dateCreation, phone, status, idStudent)
+      cursor.execute(query, values)
+     
+      # Guardar los cambios en la base de datos
+      mySqlConex.commit()
+
+      # Cerrar el cursor y la conexión a la base de datos
+      cursor.close()
+
+    # Devolver una respuesta JSON indicando que el usuario ha sido actualizado
+      return JSONResponse(content={"mensaje": f"El estudiante con id {idStudent} ha sido actualizado"})
+    except:
+      return JSONResponse(status_code=404, content={"error": f"El estudiante no pudo ser actualizado"})
+    
+#Endpoint para agregar estudiante
+@app.post("/student")
+def addStudent(student: Student):
+    try:
+      #Crear un cursor para ejecutar consultas SQL
+      cursor = mySqlConex.cursor()
+
+      #Extraer los datos del objeto Estudiante
+      idStudent = student.idStudent
+      nameStudent = student.name
+      lastNameStudent = student.lastName
+      email = student.email
+      dateCreation = student.dateCreation
+      phone = student.phone
+      status = student.status
+
+      #Ejecutar el query para agregar estudiantes a la tabla Student
+      query = "INSERT INTO student (name, lastName, email, dateCreation, phone, status) VALUES (%s, %s, %s, %s, %s, %s)"
+      values = (nameStudent, lastNameStudent, email, dateCreation, phone, status)
+      cursor.execute(query, values)
+
+      # Guardar los cambios en la base de datos
+      mySqlConex.commit()
+
+      # Cerrar el cursor y la conexión a la base de datos
+      cursor.close()
+
+      # Devolver una respuesta JSON indicando que el usuario ha sido actualizado
+      return JSONResponse(content={"mensaje": f"El estudiante con id {idStudent} ha sido actualizado"})
+    except:
+      return JSONResponse(status_code=404, content={"error": f"El estudiante no pudo ser actualizado"})
+    
