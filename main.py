@@ -5,16 +5,40 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.openapi.utils import get_openapi
 from fastapi.openapi.docs import get_swagger_ui_html
+from typing import Optional
+import re
 
 #Modelo de tabla Student
 class Student(BaseModel):
-    idStudent: int
+    idStudent: Optional [int] =  None
     name: str
     lastName: str
     email: str
     dateCreation: str
     phone: str
     status: str
+
+#Validaciones de campos
+emailRegex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+def validateEmail(email):
+    if re.match(emailRegex, email):
+        return True
+    else:
+        return False
+
+dateRegex = r'^\d{4}-\d{2}-\d{2}$'
+def validateDate(dateCreation):
+    if re.match(dateRegex, dateCreation):
+        return True
+    else:
+        return False
+
+phoneRegex = re.compile(r'^\d{4}-\d{4}$')
+def validatePhone(phone):
+    if re.match(phoneRegex, phone):
+        return True
+    else:
+        return False
 
 #Guardar la conexión a la base de datos en una variable
 mySqlConex = mysql.connector.connect(
@@ -115,6 +139,13 @@ def getStudentById(idStudent: int):
 def updateStudent(idStudent: int, student: Student):
     
     try:
+      #Validaciones:
+      if not validateEmail(student.email):
+          return JSONResponse(status_code=400, content={"Error":"Email inválido"})
+      if not validateDate(student.dateCreation):
+          return JSONResponse(status_code=400, content={"Error":"Fecha inválida"})
+      if not validatePhone(student.phone):
+          return JSONResponse(status_code=400, content={"Error":"Teléfono inválido"})
       #Crear un cursor para ejecutar consultas SQL
       cursor = mySqlConex.cursor()
 
@@ -146,11 +177,19 @@ def updateStudent(idStudent: int, student: Student):
 @app.post("/student")
 def addStudent(student: Student):
     try:
+      
+      #Validaciones:
+      if not validateEmail(student.email):
+          return JSONResponse(status_code=400, content={"Error":"Email inválido"})
+      if not validateDate(student.dateCreation):
+          return JSONResponse(status_code=400, content={"Error":"Fecha inválida"})
+      if not validatePhone(student.phone):
+          return JSONResponse(status_code=400, content={"Error":"Teléfono inválido"})
+
       #Crear un cursor para ejecutar consultas SQL
       cursor = mySqlConex.cursor()
 
       #Extraer los datos del objeto Estudiante
-      idStudent = student.idStudent
       nameStudent = student.name
       lastNameStudent = student.lastName
       email = student.email
@@ -170,7 +209,7 @@ def addStudent(student: Student):
       cursor.close()
 
       # Devolver una respuesta JSON indicando que el usuario ha sido actualizado
-      return JSONResponse(content={"mensaje": f"El estudiante con id {idStudent} ha sido actualizado"})
+      return JSONResponse(content={"mensaje": f"El estudiante ha sido agregado"})
     except:
       return JSONResponse(status_code=404, content={"error": f"El estudiante no pudo ser actualizado"})
     
