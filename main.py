@@ -100,15 +100,14 @@ def getStudentById(idStudent: int):
         return JSONResponse(content = student)
     
 #Endpoint para editar Estudiantes
-@app.put("/student")
-def updateStudent(student: Student):
+@app.put("/student/{idStudent}")
+def updateStudent(idStudent: int, student: Student):
     
     try:
       #Crear un cursor para ejecutar consultas SQL
       cursor = mySqlConex.cursor()
 
       #Extraer los datos del objeto Estudiante
-      idStudent = student.idStudent
       nameStudent = student.name
       lastNameStudent = student.lastName
       email = student.email
@@ -164,3 +163,5 @@ def addStudent(student: Student):
     except:
       return JSONResponse(status_code=404, content={"error": f"El estudiante no pudo ser actualizado"})
     
+#Endpoint para eliminar estudiante
+#@app.delete("/student/{idStudent}")
