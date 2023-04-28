@@ -104,7 +104,12 @@ def getStudent():
 
 #Endpoint GET un usuario por id (PUNTO 10)
 @app.get("/student/{idStudent}")
-def getStudentById(idStudent: int):
+def getStudentById(idStudent):
+
+    try:
+        idStudent=int(idStudent)
+    except ValueError:
+        return JSONResponse(status_code=400, content={"Error":"El idStudent debe de ser entero"})
 
     #Crear un cursor para ejecutar consultas SQL
     cursor = mySqlConex.cursor()
@@ -136,8 +141,12 @@ def getStudentById(idStudent: int):
     
 #Endpoint para editar Estudiantes
 @app.put("/student/{idStudent}")
-def updateStudent(idStudent: int, student: Student):
+def updateStudent(idStudent, student: Student):
     
+    try:
+        idStudent=int(idStudent)
+    except ValueError:
+        return JSONResponse(status_code=400, content={"Error":"El idStudent debe de ser entero"})
     try:
       #Validaciones:
       if not validateEmail(student.email):
@@ -215,7 +224,13 @@ def addStudent(student: Student):
     
 #Endpoint para eliminar estudiante de forma lógica
 @app.delete("/student/{idStudent}")
-def deleteStudent(idStudent: int):
+def deleteStudent(idStudent):
+   
+   try:
+        idStudent=int(idStudent)
+   except ValueError:
+       return JSONResponse(status_code=400, content={"Error":"El idStudent debe de ser entero"})
+   
    try:
       # Crear un cursor para ejecutar consultas SQL
       cursor = mySqlConex.cursor()
